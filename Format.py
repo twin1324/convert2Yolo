@@ -236,7 +236,7 @@ class VOC:
         try:
 
             (dir_path, dir_names, filenames) = next(
-                os.walk(os.path.abspath(path)))
+                os.walk(os.path.abspath(path))) #디렉토리 탐색, 절대경로
 
             data = {}
             progress_length = len(filenames)
@@ -529,7 +529,7 @@ class KITTI:
 
                 for filename in filenames:
 
-                    txt = open(os.path.join(dir_path, filename), "r")
+                    txt = open(os.path.join(dir_path, filename), "r")   #문자열 결합하여 하나의 경로로
 
                     filename = filename.split(".")[0]
 
@@ -559,6 +559,8 @@ class KITTI:
                         xmax = elements[6]
                         ymax = elements[7]
 
+                        distance= elements[13]
+
                         bndbox = {
                             "xmin": float(xmin),
                             "ymin": float(ymin),
@@ -571,7 +573,8 @@ class KITTI:
 
                         obj_info = {
                             "name": name,
-                            "bndbox": bndbox
+                            "bndbox": bndbox,
+                            "distance": distance
                         }
 
                         obj[str(obj_cnt)] = obj_info
@@ -682,6 +685,7 @@ class YOLO:
                     ymin = (yminAddymax - h) / 2
                     xmax = xmin + w
                     ymax = ymin + h
+                    distance= elements[13]
 
                     bndbox = {
                         "xmin": float(xmin),
@@ -692,7 +696,8 @@ class YOLO:
 
                     obj_info = {
                         "name": name_id,
-                        "bndbox": bndbox
+                        "bndbox": bndbox,
+                        "distance": distance
                     }
 
                     obj[str(obj_cnt)] = obj_info
@@ -745,6 +750,8 @@ class YOLO:
                     xmax = data[key]["objects"][str(idx)]["bndbox"]["xmax"]
                     ymax = data[key]["objects"][str(idx)]["bndbox"]["ymax"]
 
+                    distance=data[key]["objects"][str(idx)]["distance"]
+
                     b = (float(xmin), float(xmax), float(ymin), float(ymax))
                     bb = self.coordinateCvt2YOLO((img_width, img_height), b)
 
@@ -764,7 +771,7 @@ class YOLO:
 
                     bndbox = "".join(["".join([str(e), " "]) for e in bb])
                     contents = "".join(
-                        [contents, str(cls_id), " ", bndbox[:-1], "\n"])
+                        [contents, str(cls_id), " ", bndbox[:-1]," ", str(distance), "\n"])
 
                 result[key] = contents
 
